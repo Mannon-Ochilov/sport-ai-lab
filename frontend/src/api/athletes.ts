@@ -1,0 +1,103 @@
+import api from "../config/api";
+import type { Athlete, AthleteLevel, AthleteParams } from "../types/Athlete";
+import type { Pagination } from "../types/Pagination";
+
+const BASE_URL = "/athletes/";
+
+export const getAthleteAPI = async (id: number | string): Promise<Athlete> => {
+  const { data } = await api.get(`${BASE_URL}${id}/`);
+  return data;
+};
+
+export const kLoadGraphAPI = async (
+  id: number | string,
+  training_ids?: string
+): Promise<any> => {
+  const { data } = await api.get(`${BASE_URL}${id}/k_load_graph/`, {
+    params: { training_ids },
+  });
+  return data;
+};
+export const fatigueByTrainingGraph = async (
+  id: number | string,
+  training_ids?: string
+): Promise<any> => {
+  const { data } = await api.get(
+    `${BASE_URL}${id}/fatigue_by_training_graph/`,
+    {
+      params: { training_ids },
+    }
+  );
+  return data;
+};
+export const listAthletesAPI = async (): Promise<Pagination<Athlete>> => {
+  const { data } = await api.get(BASE_URL);
+  return data;
+};
+
+export const createAthleteAPI = async (athlete: Partial<Athlete>) => {
+  const { data } = await api.postForm(BASE_URL, athlete);
+  return data;
+};
+
+export const updateAthleteAPI = async (
+  id: number,
+  athlete: Partial<Athlete>
+) => {
+  const { data } = await api.patch(`${BASE_URL}${id}/`, athlete);
+  return data;
+};
+
+export const deleteAthleteAPI = async (id: number) => {
+  await api.delete(`${BASE_URL}${id}/`);
+};
+
+export const listAthleteParamsAPI = async (
+  athlete_id: number | string
+): Promise<Pagination<AthleteParams>> => {
+  const { data } = await api.get(`/athlete-params/?athlete_id=${athlete_id}`);
+  return data;
+};
+
+export const createAthleteParamAPI = async (
+  params: AthleteParams
+): Promise<Pagination<AthleteParams>> => {
+  const { data } = await api.post(`/athlete-params/`, params);
+  return data;
+};
+
+export const editAthleteParamAPI = async (
+  id: number,
+  params: AthleteParams
+): Promise<Pagination<AthleteParams>> => {
+  const { data } = await api.put(`/athlete-params/${id}/`, params);
+  return data;
+};
+
+export const deleteAthleteParamAPI = async (
+  id: number
+): Promise<Pagination<AthleteParams>> => {
+  const { data } = await api.delete(`/athlete-params/${id}/`);
+  return data;
+};
+
+export const listAthleteLevelsAPI = async (): Promise<AthleteLevel[]> => {
+  const { data } = await api.get("/athlete-levels/");
+  return data;
+};
+
+export const compareTrainingsByMuscleAPI = async (
+  athleteId: number | string,
+  trainingIds: number[],
+  muscles?: string[]
+) => {
+  const params = new URLSearchParams();
+  params.append("ids", trainingIds.join(","));
+  if (muscles?.length) params.append("muscles", muscles.join(","));
+
+  const { data } = await api.get(
+    `/athletes/${athleteId}/compare-trainings-by-muscle/`,
+    { params }
+  );
+  return data;
+};
